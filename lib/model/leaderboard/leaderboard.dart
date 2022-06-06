@@ -10,7 +10,9 @@ class Leaderboard {
 
   static void addPlayer(Player player) {
     List<Player> newPlayers = List.from(players);
+    newPlayers.add(player);
     newPlayers.sort((a, b) => a.score.compareTo(b.score));
-    reset(newPlayers.take(5));
+    final l = newPlayers.reversed;
+    reset(l.take(5));
   }
 }

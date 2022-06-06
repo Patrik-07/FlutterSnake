@@ -1,10 +1,7 @@
 import 'dart:math';
 
 import 'package:snake/model/game/gameobject/gameobject.dart';
-import 'package:snake/model/game/gameobject/gameobjects/empty.dart';
-
-import 'gameobject/gameobjects/food.dart';
-import 'gameobject/gameobjects/part.dart';
+import 'package:snake/model/game/gameobject/gameobjects/all.dart';
 
 class Map {
   static int rowCount = 0;
@@ -16,8 +13,24 @@ class Map {
     rowCount = r;
     colCount = c;
     gameobjects = List.generate(
-        rowCount, (i) => List.filled(0, Empty(), growable: false),
-        growable: false);
+      rowCount, (i) => List.filled(colCount, Empty(), growable: false),
+      growable: false
+    );
+
+    for (int col = 0; col < colCount; col++) {
+      gameobjects[0][col] = Wall();
+    }
+    for (int col = 0; col < colCount; col++) {
+      gameobjects[rowCount-1][col] = Wall();
+    }
+    for (int row = 0; row < rowCount; row++) {
+      gameobjects[row][0] = Wall();
+    }
+    for (int row = 0; row < rowCount; row++) {
+      gameobjects[row][colCount-1] = Wall();
+    }
+
+    spawnFood();
   }
 
   static void clearSnake() {

@@ -9,4 +9,12 @@ class Player {
         score = json['score'];
 
   Map<String, dynamic> toJson() => {'name': name, 'score': score};
+
+  Player.fromStringList(List<String> stringList) 
+    : name = stringList[0],
+      score = int.parse(stringList[1]);
+
+  List<String> toStringList() {
+    return [name, score.toString()];
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:snake/model/game/gameobject/gameobject.dart';
+import 'package:snake/model/game/snake/snake.dart';
 
 class Part extends GameObject {
   static int count = 0;
@@ -9,6 +10,6 @@ class Part extends GameObject {
 
   @override
   void collideWithSnake() {
-    //Snake.isAlive = false
+    Snake.instance.isAlive = false;
   }
 }

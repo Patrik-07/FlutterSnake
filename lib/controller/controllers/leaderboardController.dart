@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/leaderboard/leaderboard.dart';
 import '../../model/leaderboard/player.dart';
@@ -16,7 +17,7 @@ class LeaderboardController {
 
   LeaderboardController._privateConstructor() {
     html.window.onUnload.listen((event) async {
-      savePlayers();
+      await savePlayers();
     });
   }
 
@@ -25,32 +26,28 @@ class LeaderboardController {
   }
 
   Future<void> readPlayers() async {
-    final file = await _localFile;
-    file.readAsString().then((String jsonString) {
-      List playersJson = jsonDecode(jsonString);
-      List<Player> players =
-          playersJson.map((item) => Player.fromJson(item)).toList();
-      Leaderboard.reset(players);
-    });
+    final prefs = await SharedPreferences.getInstance();
+
+    List<Player> players = [];
+    for (int i = 0; i < 5; i++) {
+      List<String>? stringList = prefs.getStringList("player$i");
+      if (stringList == null) {
+        break;
+      }
+      Player player = Player.fromStringList(stringList);
+      players.add(player);
+    }
+
+    Leaderboard.reset(players);
   }
 
-  Future<File> savePlayers() async {
-    String jsonString = "[";
+  Future<void> savePlayers() async {
+    final prefs = await SharedPreferences.getInstance();
 
     List<Player> players = Leaderboard.players;
     for (int i = 0; i < players.length; i++) {
-      Player player = players[i];
-      jsonString += jsonEncode(player);
-      if (i != players.length - 1) {
-        jsonString += ",";
-      }
+      await prefs.setStringList("player$i", players[i].toStringList());
     }
-
-    jsonString += "]";
-
-    final file = await _localFile;
-    print("yooo");
-    return file.writeAsString(jsonString);
   }
 
   Future<String> get _localPath async {
